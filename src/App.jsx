@@ -34,6 +34,8 @@ import {
 
 import { Card, CardHeader, CardBody, CardFooter } from "@nextui-org/react";
 
+import { ethers } from "ethers";
+
 function App() {
   const account = useActiveAccount();
   const address = account?.address;
@@ -58,12 +60,13 @@ function App() {
   const { mutate: sendTx, data: transactionResult } = useSendTransaction();
 
   const [to, setTo] = useState("");
-  const [value, setValue] = useState("");
+  const [amount, setAmount] = useState("0");
 
-  async function sendToken() {
+  function sendToken() {
+    const value = ethers.utils.parseUnits(amount, 18);
     const transaction = prepareContractCall({
       contract,
-      method: "function transfer(address to, uint256 value)",
+      method: "function transfer(address to, uint value)",
       params: [to, value],
     });
     sendTx(transaction);
@@ -71,7 +74,9 @@ function App() {
 
   return (
     <>
-      {/* <MainNavbar /> */}
+      <div className="absolute top-0 -z-10 h-full w-full bg-white">
+        <div className="absolute bottom-auto left-auto right-0 top-0 h-[500px] w-[500px] -translate-x-[30%] translate-y-[20%] rounded-full bg-[rgba(173,109,244,0.5)] opacity-50 blur-[80px]"></div>
+      </div>
       <Navbar className="bg-white">
         <NavbarBrand>
           <a href="" className="text-2xl font-semibold text-[#18181b]">
@@ -105,9 +110,9 @@ function App() {
         </NavbarContent>
       </Navbar>
       <main className="flex justify-center items-center mt-20 px-5">
-        <div className="flex flex-col items-center px-5">
-          <div className="px-5">
-            <Card className="w-96 h-96 p-5">
+        <div className="flex flex-col items-center">
+          <div className="">
+            <Card className="w-80 h-80 sm:w-96 sm:h-96 p-5">
               <CardHeader className="flex flex-col items-start">
                 <p className="text-sm font-medium text-black opacity-80">
                   Your Balance
@@ -141,8 +146,8 @@ function App() {
                           <Input
                             type="number"
                             label="Amount"
-                            value={value}
-                            onChange={(e) => setValue(e.target.value)}
+                            // value={amount}
+                            onChange={(e) => setAmount(e.target.value)}
                           />
                         </ModalBody>
                         <ModalFooter>
@@ -162,28 +167,6 @@ function App() {
               </CardFooter>
             </Card>
           </div>
-          {/* <div className="flex flex-col items-center">
-            <p className="text-xs font-medium text-black opacity-80">
-              Your Balance
-            </p>
-            <h1 className="text-3xl font-bold text-black">
-              {balance?.symbol}
-              {balance?.displayValue}
-            </h1>
-          </div>
-          <div className="flex gap-5">
-            <button className="bg-black h-8 w-20 rounded-2xl text-sm font-semibold text-white">
-              Send
-            </button>
-            <button className="bg-black h-8 w-20 rounded-2xl text-sm font-semibold text-white">
-              Recaive
-            </button>
-          </div>
-          <div className="flex justify-center items-center mt-16">
-            <p className="text-sm font-normal text-black opacity-80">
-              Transaction history not found
-            </p>
-          </div> */}
         </div>
       </main>
     </>
